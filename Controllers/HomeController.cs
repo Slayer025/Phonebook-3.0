@@ -1,5 +1,4 @@
-using System;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PhonebookApp.Models;
 using PhonebookApp.Repositories;
 
@@ -7,16 +6,21 @@ namespace PhonebookApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IContactRepository _repo = new ContactRepository();
+        private readonly IContactRepository _repo;
 
         private const int PageSize = 10;
 
+        public HomeController(IContactRepository repo)
+        {
+            _repo = repo;
+        }
+
         // GET: Home/Index
-        public ActionResult Index(int? page, string searchTerm)
+        public async Task<IActionResult> Index(int? page, string searchTerm)
         {
             int pageNumber = page.HasValue && page.Value > 0 ? page.Value : 1;
 
-            var result = _repo.GetContactsPaged(pageNumber, PageSize, searchTerm);
+            var result = await _repo.GetContactsPagedAsync(pageNumber, PageSize, searchTerm);
 
             ViewBag.SearchTerm = searchTerm;
 
@@ -24,7 +28,7 @@ namespace PhonebookApp.Controllers
         }
 
         // GET: Home/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -32,11 +36,11 @@ namespace PhonebookApp.Controllers
         // POST: Home/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Contact contact)
+        public async Task<IActionResult> Create(Contact contact)
         {
             if (ModelState.IsValid)
             {
-                _repo.InsertContact(contact);
+                await _repo.InsertContactAsync(contact);
                 return RedirectToAction("Index");
             }
 
@@ -44,18 +48,18 @@ namespace PhonebookApp.Controllers
         }
 
         // GET: Home/Edit/5
-        public ActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (!id.HasValue)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            var contact = _repo.GetContactById(id.Value);
+            var contact = await _repo.GetContactByIdAsync(id.Value);
 
             if (contact == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(contact);
@@ -64,11 +68,11 @@ namespace PhonebookApp.Controllers
         // POST: Home/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Contact contact)
+        public async Task<IActionResult> Edit(Contact contact)
         {
             if (ModelState.IsValid)
             {
-                _repo.UpdateContact(contact);
+                await _repo.UpdateContactAsync(contact);
                 return RedirectToAction("Index");
             }
 
@@ -77,7 +81,7 @@ namespace PhonebookApp.Controllers
 
         // POST: Home/Delete/5
         [HttpPost]
-        public JsonResult Delete(int? id)
+        public async Task<JsonResult> Delete(int? id)
         {
             if (!id.HasValue)
             {
@@ -86,7 +90,7 @@ namespace PhonebookApp.Controllers
 
             try
             {
-                bool success = _repo.DeleteContact(id.Value);
+                bool success = await _repo.DeleteContactAsync(id.Value);
 
                 if (success)
                 {

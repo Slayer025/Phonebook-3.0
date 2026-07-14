@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using PhonebookApp.Models;
 
 namespace PhonebookApp.Repositories
@@ -11,12 +9,12 @@ namespace PhonebookApp.Repositories
     {
         private readonly string _connectionString;
 
-        public ContactRepository()
+        public ContactRepository(IConfiguration configuration)
         {
-            _connectionString = ConfigurationManager.ConnectionStrings["PhonebookDbConnection"].ConnectionString;
+            _connectionString = configuration.GetConnectionString("PhonebookDbConnection");
         }
 
-        public PagedResult<Contact> GetContactsPaged(int pageNumber, int pageSize, string searchTerm)
+        public async Task<PagedResult<Contact>> GetContactsPagedAsync(int pageNumber, int pageSize, string searchTerm)
         {
             var contacts = new List<Contact>();
             int totalCount;
@@ -39,11 +37,11 @@ namespace PhonebookApp.Repositories
                 };
                 cmd.Parameters.Add(totalCountParam);
 
-                conn.Open();
+                await conn.OpenAsync();
 
-                using (var reader = cmd.ExecuteReader())
+                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         contacts.Add(MapReaderToContact(reader));
                     }
@@ -61,7 +59,7 @@ namespace PhonebookApp.Repositories
             };
         }
 
-        public Contact GetContactById(int id)
+        public async Task<Contact> GetContactByIdAsync(int id)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("sp_GetContactById", conn))
@@ -69,11 +67,11 @@ namespace PhonebookApp.Repositories
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
 
-                conn.Open();
+                await conn.OpenAsync();
 
-                using (var reader = cmd.ExecuteReader())
+                using (var reader = await cmd.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         return MapReaderToContact(reader);
                     }
@@ -83,7 +81,7 @@ namespace PhonebookApp.Repositories
             return null;
         }
 
-        public int InsertContact(Contact contact)
+        public async Task<int> InsertContactAsync(Contact contact)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("sp_InsertContact", conn))
@@ -107,14 +105,14 @@ namespace PhonebookApp.Repositories
                 };
                 cmd.Parameters.Add(newIdParam);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
 
                 return newIdParam.Value != DBNull.Value ? (int)newIdParam.Value : 0;
             }
         }
 
-        public bool UpdateContact(Contact contact)
+        public async Task<bool> UpdateContactAsync(Contact contact)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("sp_UpdateContact", conn))
@@ -133,15 +131,15 @@ namespace PhonebookApp.Repositories
                     Value = (object)contact.Address ?? DBNull.Value
                 });
 
-                conn.Open();
-                object result = cmd.ExecuteScalar();
+                await conn.OpenAsync();
+                object result = await cmd.ExecuteScalarAsync();
                 int rowsAffected = result != null ? Convert.ToInt32(result) : 0;
 
                 return rowsAffected > 0;
             }
         }
 
-        public bool DeleteContact(int id)
+        public async Task<bool> DeleteContactAsync(int id)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("sp_DeleteContact", conn))
@@ -149,8 +147,8 @@ namespace PhonebookApp.Repositories
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id });
 
-                conn.Open();
-                object result = cmd.ExecuteScalar();
+                await conn.OpenAsync();
+                object result = await cmd.ExecuteScalarAsync();
                 int rowsAffected = result != null ? Convert.ToInt32(result) : 0;
 
                 return rowsAffected > 0;

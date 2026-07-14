@@ -3,8 +3,7 @@
 
 @{
     ViewBag.Title = "Contacts";
-    string searchTerm = Context.Request.QueryString["searchTerm"];
-    string encodedSearchTerm = Server.UrlEncode(searchTerm ?? string.Empty);
+    string searchTerm = ViewBag.SearchTerm as string;
 }
 
 <h2>Contacts</h2>

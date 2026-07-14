@@ -34,11 +34,17 @@ async function handleSubmit(contact) {
 </script>
 
 <template>
-  <h2 class="mb-3">Create Contact</h2>
-  <ContactForm
-    :model-value="emptyContact"
-    :submitting="submitting"
-    :server-errors="serverErrors"
-    @submit="handleSubmit"
-  />
+  <router-link to="/" class="text-decoration-none small pb-muted d-inline-block mb-2">
+    <i class="bi bi-arrow-left"></i> Back to contacts
+  </router-link>
+  <h2 class="pb-page-title mb-3"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Create Contact</h2>
+
+  <div class="pb-card p-4 pb-form-card">
+    <ContactForm
+      :model-value="emptyContact"
+      :submitting="submitting"
+      :server-errors="serverErrors"
+      @submit="handleSubmit"
+    />
+  </div>
 </template>

@@ -27,15 +27,19 @@ function onCancel() {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ title }}</h5>
+            <h5 class="modal-title d-flex align-items-center gap-2">
+              <i class="bi bi-exclamation-triangle-fill text-danger"></i>{{ title }}
+            </h5>
             <button type="button" class="btn-close" aria-label="Close" @click="onCancel"></button>
           </div>
           <div class="modal-body">
             <p class="mb-0">{{ message }}</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="onCancel">{{ cancelLabel }}</button>
-            <button type="button" class="btn btn-danger" @click="onConfirm">{{ confirmLabel }}</button>
+            <button type="button" class="btn btn-outline-secondary" @click="onCancel">{{ cancelLabel }}</button>
+            <button type="button" class="btn btn-danger" @click="onConfirm">
+              <i class="bi bi-trash-fill me-1"></i>{{ confirmLabel }}
+            </button>
           </div>
         </div>
       </div>

@@ -52,22 +52,27 @@ async function handleSubmit(updatedContact) {
 </script>
 
 <template>
-  <h2 class="mb-3">Edit Contact</h2>
+  <router-link to="/" class="text-decoration-none small pb-muted d-inline-block mb-2">
+    <i class="bi bi-arrow-left"></i> Back to contacts
+  </router-link>
+  <h2 class="pb-page-title mb-3"><i class="bi bi-pencil-fill me-2 text-primary"></i>Edit Contact</h2>
 
-  <div v-if="loading" class="text-center py-4">
-    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-    Loading...
+  <div v-if="loading" class="text-center py-5">
+    <span class="spinner-border spinner-border-sm text-primary me-2" role="status" aria-hidden="true"></span>
+    <span class="pb-muted">Loading...</span>
   </div>
 
-  <div v-else-if="notFound" class="alert alert-warning">
-    Contact not found. <router-link to="/">Back to list</router-link>
+  <div v-else-if="notFound" class="alert alert-warning d-flex align-items-center gap-2">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>Contact not found. <router-link to="/">Back to list</router-link></span>
   </div>
 
-  <ContactForm
-    v-else
-    :model-value="contact"
-    :submitting="submitting"
-    :server-errors="serverErrors"
-    @submit="handleSubmit"
-  />
+  <div v-else class="pb-card p-4 pb-form-card">
+    <ContactForm
+      :model-value="contact"
+      :submitting="submitting"
+      :server-errors="serverErrors"
+      @submit="handleSubmit"
+    />
+  </div>
 </template>

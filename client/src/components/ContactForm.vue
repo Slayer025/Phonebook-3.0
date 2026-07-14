@@ -79,58 +79,68 @@ function onSubmit() {
 
 <template>
   <form novalidate @submit.prevent="onSubmit">
-    <div class="mb-3">
-      <label class="form-label" for="contact-name">Name</label>
+    <div class="form-floating mb-3">
       <input
         id="contact-name"
         v-model="form.name"
         type="text"
         class="form-control"
         :class="{ 'is-invalid': displayedErrors.name }"
+        placeholder="Name"
         maxlength="255"
         required
         @blur="onBlur('name')"
       />
+      <label for="contact-name">Name</label>
       <div class="invalid-feedback">{{ displayedErrors.name }}</div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label" for="contact-phone">Phone Number</label>
+    <div class="form-floating mb-3">
       <input
         id="contact-phone"
         v-model="form.phoneNumber"
         type="text"
         class="form-control"
         :class="{ 'is-invalid': displayedErrors.phoneNumber }"
+        placeholder="Phone Number"
         maxlength="50"
         required
         @blur="onBlur('phoneNumber')"
       />
+      <label for="contact-phone">Phone Number</label>
       <div class="invalid-feedback">{{ displayedErrors.phoneNumber }}</div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label" for="contact-email">Email</label>
+    <div class="form-floating mb-3">
       <input
         id="contact-email"
         v-model="form.email"
         type="email"
         class="form-control"
         :class="{ 'is-invalid': displayedErrors.email }"
+        placeholder="Email"
         maxlength="255"
         @blur="onBlur('email')"
       />
+      <label for="contact-email">Email (optional)</label>
       <div class="invalid-feedback">{{ displayedErrors.email }}</div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label" for="contact-address">Address</label>
-      <textarea id="contact-address" v-model="form.address" class="form-control" rows="4"></textarea>
+    <div class="form-floating mb-4">
+      <textarea
+        id="contact-address"
+        v-model="form.address"
+        class="form-control"
+        placeholder="Address"
+        style="height: 110px;"
+      ></textarea>
+      <label for="contact-address">Address (optional)</label>
     </div>
 
     <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-primary" :disabled="submitting">
+      <button type="submit" class="btn btn-primary px-4" :disabled="submitting">
         <span v-if="submitting" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        <i v-else class="bi bi-check-lg me-1"></i>
         Save
       </button>
       <router-link to="/" class="btn btn-outline-secondary">Cancel</router-link>

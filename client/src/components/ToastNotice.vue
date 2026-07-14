@@ -16,7 +16,10 @@ const { toasts, dismiss } = useToast()
       aria-atomic="true"
     >
       <div class="d-flex">
-        <div class="toast-body">{{ toast.message }}</div>
+        <div class="toast-body">
+          <i class="bi me-1" :class="toast.type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+          {{ toast.message }}
+        </div>
         <button
           type="button"
           class="btn-close btn-close-white me-2 m-auto"
